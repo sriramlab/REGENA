@@ -1,0 +1,56 @@
+name: "Tests on Ubuntu"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build-and-test:
+    name: Tests on Ubuntu
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cxx: "clang++-14"
+            build-type: "Release"
+          - cxx: "g++-12"
+            build-type: "Release"
+
+    env:
+      CXX: ${{ matrix.cxx }}
+
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+
+      - name: cmake configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
+
+      - name: cmake build
+        run: cmake --build build --parallel 4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: install python dependencies
+        run: pip install numpy pandas
+
+      - name: run examples
+        run: NTHREADS=2 bash test.sh
+        working-directory: example
+
+      - name: check outputs
+        run: |
+          for f in scan_demo.out test.lambda1.out test.partitioned.out scan_demo.config.out; do
+            grep -q "^WIDE_TABLE" "$f" || { echo "no WIDE_TABLE in $f"; exit 1; }
+          done
+          cmp <(sed -n '/^WIDE_TABLE/,$p' scan_demo.out) <(sed -n '/^WIDE_TABLE/,$p' scan_demo.config.out)
+          grep -q "^classification" scan_demo.scale.tsv
+        shell: bash
+        working-directory: example

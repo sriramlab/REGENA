@@ -1,0 +1,11 @@
+build/
+build_*/
+__pycache__/
+*.py[cod]
+core.*
+
+# example outputs (regenerate with example/test.sh)
+example/*.out
+example/*.out.*
+example/*.tsv
+.DS_Store

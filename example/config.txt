@@ -1,0 +1,15 @@
+genotype=test
+phenotype=scan_demo.pheno
+covariate=test.cov
+environment=test.env
+annotation=single.annot
+output=scan_demo.config.out
+model=G+GxE+NxE
+num_vec=10
+num_jack=10
+nthreads=4
+seed=1
+use-boxcox=1
+boxcox-min=-1
+boxcox-max=2
+boxcox-n=13
