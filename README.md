@@ -2,11 +2,8 @@
 **R**obust **E**stimator of **G**ene-**EN**vironment **A**rchitectures
 
 Whether a gene-by-environment (GxE) interaction is present can depend on the scale the
-phenotype is measured on. If the environment multiplies a trait, every genetic effect is
-larger in one environment on the observed scale, while on the log scale there is no
-interaction at all. REGENA fits the GENIE G+GxE+NxE variance-component model
-([Pazokitoroudi et al. 2024](https://doi.org/10.1016/j.ajhg.2024.05.015)) on a grid of
-Box-Cox transformed phenotypes in a single pass over the genotypes. At each scale it reports:
+phenotype is measured on. REGENA fits a variance-component model on a grid of
+monotone transformed phenotypes (Box-Cox as an exmaple) in a single pass over the genotypes. At each scale it reports:
 
 - the environment-specific genetic variances σ²_g0 and σ²_g1 (**amplification** when they differ)
 - the cross-environment genetic correlation ρ_g (**effect heterogeneity** when ρ_g < 1)
@@ -27,7 +24,7 @@ The scale-selection script needs Python 3 with `numpy` and `pandas`.
 ## How to install
 
 ```
-git clone https://github.com/<org>/REGENA.git
+git clone https://github.com/sriramlab/REGENA.git
 cd REGENA
 mkdir build
 cd build/
