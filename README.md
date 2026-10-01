@@ -1,9 +1,6 @@
 # REGENA
 **R**obust **E**stimator of **G**ene-**EN**vironment **A**rchitectures
 
-[![Tests on Ubuntu](https://github.com/sriramlab/REGENA/actions/workflows/test_ubuntu.yml/badge.svg)](https://github.com/sriramlab/REGENA/actions/workflows/test_ubuntu.yml)
-[![Tests on macOS](https://github.com/sriramlab/REGENA/actions/workflows/test_macos.yml/badge.svg)](https://github.com/sriramlab/REGENA/actions/workflows/test_macos.yml)
-
 Whether a gene-by-environment (GxE) interaction is present can depend on the scale the
 phenotype is measured on. REGENA fits a variance-component model on a grid of
 monotone transformed phenotypes (Box-Cox as an example) in a single pass over the genotypes. At each scale it reports:
@@ -47,7 +44,7 @@ REGENA is a standalone C++ program built from source on Linux or macOS.
 | Ubuntu 22.04 (GitHub Actions) | x86-64 | g++ 12 and clang++ 14 |
 
 The macOS build (Apple clang, arm64) is checked on every push by the `Tests on macOS`
-workflow; see the badge above for its current status.
+GitHub Actions workflow.
 
 ### Hardware
 No non-standard hardware is required. The demo runs on a laptop with a single core and
