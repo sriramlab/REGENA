@@ -17,8 +17,7 @@ scale removes, from **scale-independent** GxE, which no scale removes. It also p
 2. [Installation guide](#2-installation-guide)
 3. [Demo](#3-demo)
 4. [Instructions for use](#4-instructions-for-use)
-5. [Reproducing the manuscript results](#5-reproducing-the-manuscript-results)
-6. [License](#license), [Citation](#citation)
+5. [License](#license), [Citation](#citation)
 
 ## 1. System requirements
 
@@ -27,7 +26,7 @@ REGENA is a standalone C++ program built from source on Linux or macOS.
 
 | Dependency | Version | Needed for |
 |---|---|---|
-| C++ compiler with C++11 support (`g++` or `clang++`) | tested: g++ 12.2.0, clang++ 14 | building REGENA |
+| C++ compiler with C++11 support (`g++` or `clang++`) | tested: g++ 12.2.0, clang++ 14, Apple clang | building REGENA |
 | CMake | ≥ 3.10 (tested: 4.3.2) | building REGENA |
 | make | tested: GNU Make 4.3 | building REGENA |
 | POSIX threads | provided by the system | multithreading |
@@ -42,9 +41,10 @@ REGENA is a standalone C++ program built from source on Linux or macOS.
 |---|---|---|
 | Debian GNU/Linux 12 (bookworm) | x86-64 | g++ 12.2.0 |
 | Ubuntu 22.04 (GitHub Actions) | x86-64 | g++ 12 and clang++ 14 |
+| macOS 14 and macOS 15 (GitHub Actions) | arm64 | Apple clang (Xcode default) |
 
-The macOS build (Apple clang, arm64) is checked on every push by the `Tests on macOS`
-GitHub Actions workflow.
+The Ubuntu and macOS rows are built and run on the demo at every push by the workflows in
+`.github/workflows`.
 
 ### Hardware
 No non-standard hardware is required. The demo runs on a laptop with a single core and
@@ -90,7 +90,10 @@ bash test.sh
 `test.sh` runs four REGENA jobs (a 13-scale Box-Cox scan, a single scale, a model
 partitioned over two annotations, and the scan again from a config file), then writes the
 per-λ table `scan_demo.tsv` and the scale selection `scan_demo.scale.tsv`. The selection
-step is skipped with a message if `numpy` and `pandas` are not installed.
+step is skipped with a message if `numpy` and `pandas` are not installed. Every job fixes
+the seed of REGENA's random vectors (`-s 1`, or `seed=1` in the config file), so the
+output is the same on every run; without `-s` the seed is random and the estimates vary
+slightly between runs.
 
 ### Expected output
 Each REGENA job ends with `REGENA ran successfully`. The scan (`scan_demo.tsv`; tests from
@@ -250,31 +253,6 @@ the stratum with **E = 0**.
 
 `--alpha` should be corrected for the number of trait × environment pairs tested.
 `--trajectory` writes every per-λ statistic and test to a TSV.
-
-## 5. Reproducing the manuscript results
-
-The manuscript analyses use individual-level UK Biobank data, which cannot be
-redistributed; access is by application to the UK Biobank (https://www.ukbiobank.ac.uk).
-With that data in hand:
-
-1. **Data.** Apply the sample and SNP quality control and build the covariates described
-   in the manuscript Methods (unrelated white British individuals, array SNPs), and write
-   one phenotype file per trait and one binary environment file per exposure.
-2. **Scan.** For every trait × environment pair, run REGENA over 100 Box-Cox scales
-   between −3 and 3 with a single annotation holding every SNP:
-   ```
-   ./REGENA -g <genotype prefix> -p <trait>.pheno -c <covariates> -e <env>.env -a single.annot \
-       -m G+GxE+NxE -k 10 -jn 100 \
-       -bx -bx-min -3 -bx-max 3 -bx-n 100 \
-       -o <trait>.<env>.out
-   ```
-3. **Scale selection.** Run `scripts/regena_select_scale.py` on each output, with `--alpha`
-   set to the multiple-testing threshold given in the manuscript Methods. Its
-   `classification`, `lambda_selected` and `remaining_gxe` fields give the
-   scale-dependent / scale-independent call and the reported scale of each pair.
-
-The demo above reproduces the central behaviour, GxE that is present on the observed
-scale and removed by a transformation, without restricted data.
 
 ## Simulator
 To simulate phenotypes with GxE effects on real genotypes, see https://github.com/sriramlab/Simulator.
