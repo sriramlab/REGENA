@@ -1,6 +1,8 @@
 #!/bin/bash
 # REGENA toy examples (5,000 individuals x 10,000 SNPs).
 # Run from this directory after building:  cd example && bash test.sh
+# Every input here is synthetic (no real genotype or phenotype data); simulate_inputs.sh
+# regenerates all of them from fixed seeds.
 set -euo pipefail
 
 REGENA=${REGENA:-../build/REGENA}
@@ -20,6 +22,8 @@ ${REGENA} -g $gen -p scan_demo.pheno -c $covar -e $env -a single.annot \
     -o scan_demo.out
 
 # 2) A single scale. lambda = 1 is the observed scale (shifted and standardised).
+#    test.positive.pheno is the same simulation without the environment effect
+#    (--shift 0 --seed 2), so it has no GxE on any scale.
 ${REGENA} -g $gen -p test.positive.pheno -c $covar -e $env -a single.annot \
     -m G+GxE+NxE -k 10 -jn 10 -t $nthreads -s 1 \
     -bx -bx-min 1 -bx-max 1 -bx-n 1 \
